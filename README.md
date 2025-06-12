@@ -1,4 +1,4 @@
-# sotcks_app
+# Sotcks App
 
 A new Flutter project.
 
