@@ -1,29 +1,49 @@
 # Flutter
-.dart_tool/
 .buildlog/
-.packages
-.flutter-plugins
-.flutter-plugins-dependencies
 .melos_tool/
 .pub-cache/
 .pub/
+coverage/
+
+# Build artifacts
 build/
+.dart_tool/
+
+# Android specific
+android/captures/
+android/.gradle/
+android/local.properties
+android/app/build/
+android/app/release/
+android/app/profile/
+
+# iOS specific
+ios/Pods/
+ios/Runner/GeneratedPluginRegistrant.h
+ios/Runner/GeneratedPluginRegistrant.m
+ios/.symlinks/
 ios/Flutter/Flutter.framework
 ios/Flutter/Flutter.podspec
-coverage/
-*.flutter-plugins
-*.flutter-plugins-dependencies
-*.iml
 
-# IDE
+
+# IDE specific
 .idea/
 *.iml
-
-# VS Code
 .vscode/
 
-# MacOS
+# Rider specific
+.idea.SolutionCaches/
+
+# Log files
+*.log
+
+# macOS specific
 .DS_Store
 
-# Others
-pubspec.lock
+# Pub files
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Generated plugin files
+lib/generated_plugin_registrant.dart
