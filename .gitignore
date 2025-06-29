@@ -1,0 +1,29 @@
+# Flutter
+.dart_tool/
+.buildlog/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.melos_tool/
+.pub-cache/
+.pub/
+build/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+coverage/
+*.flutter-plugins
+*.flutter-plugins-dependencies
+*.iml
+
+# IDE
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Others
+pubspec.lock
