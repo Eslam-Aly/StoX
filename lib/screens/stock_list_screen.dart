@@ -27,7 +27,7 @@ class StockListScreen extends StatelessWidget {
           child: Scaffold(
             backgroundColor: Colors.transparent,
             appBar: AppBar(
-              title: const Text("StoX"),
+              title: const Text("StoX", style: TextStyle(fontWeight: FontWeight.bold)),
               backgroundColor: Colors.transparent,
               elevation: 0,
               bottom: const TabBar(

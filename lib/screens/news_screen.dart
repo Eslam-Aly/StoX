@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/news_service.dart';
 import '../widgets/background_wrapper.dart';
+import '../widgets/custom_app_bar.dart';
+import '../models/country_option.dart';
+
 
 /// StatefulWidget responsible for showing the list of news.
 class NewsScreen extends StatefulWidget {
@@ -14,6 +17,7 @@ class NewsScreen extends StatefulWidget {
 }
 
 class _NewsScreenState extends State<NewsScreen> {
+  late CountryOption selectedCountry = countryOptions[0];
   // List to hold fetched news articles
   List<dynamic> news = [];
   // Loading indicator flag
@@ -52,10 +56,14 @@ class _NewsScreenState extends State<NewsScreen> {
         ),
         Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            title: const Text("News"),
-            backgroundColor: Colors.transparent,
-            elevation: 0,
+          appBar: CustomAppBar(
+            selectedCountry: selectedCountry,
+            onCountryChanged: (CountryOption newCountry) {
+              setState(() {
+                selectedCountry = newCountry;
+                // Optionally trigger filtering here
+              });
+            },
           ),
           body: BackgroundWrapper(
             child: isLoading
