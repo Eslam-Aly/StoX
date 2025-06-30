@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/news_service.dart';
+import '../widgets/background_wrapper.dart';
 
 /// StatefulWidget responsible for showing the list of news.
 class NewsScreen extends StatefulWidget {
@@ -41,70 +42,82 @@ class _NewsScreenState extends State<NewsScreen> {
   /// Renders the UI including loading spinner or list of news articles.
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(title: const Text("News")),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-        itemCount: news.length,
-        itemBuilder: (context, index) {
-          final article = news[index];
-          // Each article is displayed as a ListTile-style row
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Show article image if available
-                if (article['image'] != null && article['image'].isNotEmpty)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      article['image'],
-                      width: 100,
-                      height: 70,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => const Icon(Icons.article, color: Colors.white),
-                    ),
-                  )
-                else
-                  const SizedBox(width: 100, height: 70),
-
-                const SizedBox(width: 12),
-
-                // Display headline and source in a tappable container
-                Expanded(
-                  child: InkWell(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => NewsDetailScreen(article: article)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          article['headline'] ?? '',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: Image.asset(
+            'assets/images/background.jpg',
+            fit: BoxFit.cover,
+          ),
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            title: const Text("News"),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
+          body: BackgroundWrapper(
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    itemCount: news.length,
+                    itemBuilder: (context, index) {
+                      final article = news[index];
+                      // Each article is displayed as a ListTile-style row
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (article['image'] != null && article['image'].isNotEmpty)
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  article['image'],
+                                  width: 100,
+                                  height: 70,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => const Icon(Icons.article, color: Colors.white),
+                                ),
+                              )
+                            else
+                              const SizedBox(width: 100, height: 70),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: InkWell(
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => NewsDetailScreen(article: article)),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      article['headline'] ?? '',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      article['source'] ?? '',
+                                      style: const TextStyle(color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          article['source'] ?? '',
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+          ),
+        ),
+      ],
     );
   }
 }
