@@ -30,22 +30,25 @@ class _PopularTabState extends State<PopularTab> {
 
   /// Fetches stock data for each symbol in the list
   Future<void> fetchStockData() async {
-    List<Map<String, dynamic>> fetched = [];
+    try {
+      // Fire all requests in parallel
+      final futures = symbols.map((symbol) => StockService.fetchStockInfo(symbol)).toList();
+      final results = await Future.wait(futures);
 
-    for (String symbol in symbols) {
-      final stock = await StockService.fetchStockInfo(symbol); // Fetch data from the API
-      if (stock != null) fetched.add(stock); // Only add if data is not null
-      await Future.delayed(const Duration(milliseconds: 100)); // Avoid API rate limit
+      // Filter out null results
+      final fetched = results.whereType<Map<String, dynamic>>().toList();
+
+      if (!mounted) return;
+
+      setState(() {
+        stocks = fetched;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching stock data: $e');
+      if (!mounted) return;
+      setState(() => isLoading = false);
     }
-
-    // Prevent state update if the widget was disposed during async call
-    if (!mounted) return;
-
-    // Update UI with the fetched data
-    setState(() {
-      stocks = fetched;
-      isLoading = false;
-    });
   }
 
   @override

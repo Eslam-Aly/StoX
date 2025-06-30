@@ -25,46 +25,56 @@ class _StocksTabState extends State<StocksTab> {
   }
 
   /// Fetches the first 100 stock symbols and their corresponding info.
+  /// Fetches the first N stock symbols and their corresponding info concurrently.
+  /// Fetches selected stock symbols and their info using parallel API calls
   Future<void> fetchStockDetailsForAll() async {
     try {
-      // Fetch a list of all stock symbols from the US exchange
-      final allSymbols = await StockService.fetchAllStocks();
+      // Hardcoded list of popular stock symbols
+      const List<String> popularSymbols = [
+        'AAPL',
+        'MSFT',
+        'GOOGL',
+        'AMZN',
+        'TSLA',
+        'META',
+        'NVDA',
+        'BRK.B',
+        'JNJ',
+        'JPM',
+        'V',
+        'PG',
+        'UNH',
+        'MA',
+        'HD',
+        'KO',
+        'PEP',
+        'DIS',
+        'XOM',
+        'INTC',
+      ];
 
-      // Limit to the first 100 stocks to reduce API load
-      final first100 = allSymbols.take(100).toList();
+      // Fetch stock info in parallel
+      final detailedStocks = await Future.wait(
+        popularSymbols.map((symbol) async {
+          try {
+            final info = await StockService.fetchStockInfo(symbol);
+            return info;
+          } catch (e) {
+            print('⚠️ Error fetching $symbol: $e');
+            return null;
+          }
+        }),
+      );
 
-      List<Map<String, dynamic>> detailedStocks = [];
-
-      // Fetch detailed info for each of the 100 stocks
-      for (final stock in first100) {
-        final symbol = stock['symbol'];
-        final info = await StockService.fetchStockInfo(symbol);
-
-        // Add the stock info to the list if the API call was successful
-        if (info != null) {
-          detailedStocks.add(info);
-        }
-
-        // Delay each request slightly to avoid hitting rate limits
-        await Future.delayed(const Duration(milliseconds: 100));
-      }
-
-      // Only update state if the widget is still in the widget tree
       if (!mounted) return;
 
-      // Save the fetched data and update the loading state
       setState(() {
-        stocks = detailedStocks;
+        stocks = detailedStocks.whereType<Map<String, dynamic>>().toList();
         isLoading = false;
       });
     } catch (e) {
-      // If the widget was removed during the async operation, exit early
       if (!mounted) return;
-
-      // Set loading to false and show an error message
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error fetching stocks: $e')),
       );
