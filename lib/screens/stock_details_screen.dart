@@ -1,7 +1,10 @@
+/// stock_details_screen.dart
+/// Displays a detailed view of a stock, including a price chart, basic info,
+/// and quick price alert actions.
+
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
-import '../services/stock_service.dart';
+import '../services/stock_chart_service.dart';
 
 class StockDetailsScreen extends StatefulWidget {
   final String stockSymbol;
@@ -27,21 +30,23 @@ class _StockDetailsScreenState extends State<StockDetailsScreen> {
     fetchChart();
   }
 
+  /// Fetches candle data and transforms it into chart spots for FLChart.
   Future<void> fetchChart() async {
     final now = DateTime.now();
     final to = now.millisecondsSinceEpoch ~/ 1000;
     final from = now.subtract(const Duration(days: 30)).millisecondsSinceEpoch ~/ 1000;
-    final rawData = await StockService.fetchCandleData(
+
+    final rawData = await StockChartService.fetchCandleData(
       symbol: widget.stockSymbol,
       resolution: 'D',
-      from: from,
-      to: to,
     );
+
     final spots = rawData.asMap().entries.map((entry) {
       final index = entry.key.toDouble();
       final price = double.tryParse(entry.value['price'].toString()) ?? 0.0;
       return FlSpot(index, price);
     }).toList();
+
     setState(() {
       chartSpots = spots;
       isLoading = false;
@@ -57,7 +62,7 @@ class _StockDetailsScreenState extends State<StockDetailsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Chart
+            // Chart display
             Container(
               height: 200,
               padding: const EdgeInsets.all(8),
@@ -86,7 +91,7 @@ class _StockDetailsScreenState extends State<StockDetailsScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Stock title and change
+            // Stock name and price change
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -108,7 +113,7 @@ class _StockDetailsScreenState extends State<StockDetailsScreen> {
             ),
             const Divider(height: 32),
 
-            // Stock info
+            // Additional stock info
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
@@ -135,7 +140,7 @@ class _StockDetailsScreenState extends State<StockDetailsScreen> {
 
             const Divider(height: 32),
 
-            // Set price alert
+            // Price alert section
             const Text("🔔 Set price alert"),
             const SizedBox(height: 12),
             Wrap(
@@ -155,7 +160,7 @@ class _StockDetailsScreenState extends State<StockDetailsScreen> {
   }
 }
 
-// Helper widget for alert buttons
+/// Returns a styled ElevatedButton for setting price alerts.
 Widget _alertButton(String label) {
   return ElevatedButton(
     onPressed: () {},

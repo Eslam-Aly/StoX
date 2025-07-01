@@ -1,3 +1,6 @@
+/// Displays a list of popular stocks with live price and trend info.
+/// Fetches stock details from the Finnhub API and renders them in a scrollable list.
+
 import 'package:flutter/material.dart';
 import '../services/stock_service.dart';
 
@@ -24,36 +27,16 @@ class _StocksTabState extends State<StocksTab> {
     fetchStockDetailsForAll();
   }
 
-  /// Fetches the first 100 stock symbols and their corresponding info.
-  /// Fetches the first N stock symbols and their corresponding info concurrently.
-  /// Fetches selected stock symbols and their info using parallel API calls
+  /// Fetches detailed stock info for a predefined list of popular symbols.
   Future<void> fetchStockDetailsForAll() async {
     try {
-      // Hardcoded list of popular stock symbols
+      // Hardcoded list of popular stock symbols (Top 20)
       const List<String> popularSymbols = [
-        'AAPL',
-        'MSFT',
-        'GOOGL',
-        'AMZN',
-        'TSLA',
-        'META',
-        'NVDA',
-        'BRK.B',
-        'JNJ',
-        'JPM',
-        'V',
-        'PG',
-        'UNH',
-        'MA',
-        'HD',
-        'KO',
-        'PEP',
-        'DIS',
-        'XOM',
-        'INTC',
+        'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA', 'BRK.B', 'JNJ', 'JPM',
+        'V', 'PG', 'UNH', 'MA', 'HD', 'KO', 'PEP', 'DIS', 'XOM', 'INTC',
       ];
 
-      // Fetch stock info in parallel
+      // Fetch each stock's info in parallel
       final detailedStocks = await Future.wait(
         popularSymbols.map((symbol) async {
           try {
@@ -68,6 +51,7 @@ class _StocksTabState extends State<StocksTab> {
 
       if (!mounted) return;
 
+      // Store valid stock responses and stop loading
       setState(() {
         stocks = detailedStocks.whereType<Map<String, dynamic>>().toList();
         isLoading = false;
@@ -83,27 +67,25 @@ class _StocksTabState extends State<StocksTab> {
 
   @override
   Widget build(BuildContext context) {
-    // Show loading spinner while data is being fetched
+    // Show spinner while loading
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    // Build the list view of stock items
+    // Render list of stock tiles
     return ListView.builder(
       itemCount: stocks.length,
       itemBuilder: (context, index) {
         final stock = stocks[index];
 
-        // Parse and calculate the difference between current price and previous close
+        // Calculate price difference and trend color
         final price = (stock['price'] as num).toDouble();
         final prevClose = (stock['prevClose'] as num).toDouble();
         final diff = price - prevClose;
-
-        // Set the color based on whether the price went up or down
         final color = diff > 0 ? Colors.green : (diff < 0 ? Colors.red : Colors.white);
 
         return ListTile(
-          // If logo is available, show it, otherwise show the first letter of the symbol
+          // Logo or fallback avatar
           leading: (stock['logo'] != null && stock['logo'].isNotEmpty)
               ? Image.network(
                   stock['logo'],
@@ -113,19 +95,19 @@ class _StocksTabState extends State<StocksTab> {
                 )
               : CircleAvatar(child: Text(stock['symbol'][0])),
 
-          // Display the company name
+          // Company name
           title: Text(
             stock['name'],
             style: const TextStyle(color: Colors.white),
           ),
 
-          // Display the current stock price
+          // Current price
           subtitle: Text(
             '\$${stock['price']}',
             style: const TextStyle(color: Colors.white),
           ),
 
-          // Show an icon indicating price trend
+          // Trend icon
           trailing: Icon(Icons.show_chart, color: color),
         );
       },

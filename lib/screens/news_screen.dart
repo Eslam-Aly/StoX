@@ -1,5 +1,6 @@
-/// This screen displays a list of general news articles and allows viewing article details.
-/// Uses NewsService to fetch data from Finnhub API.
+/// news_screen.dart
+/// Displays a list of general news headlines from the Finnhub API.
+/// Users can tap an article to view a detailed summary and launch the full article in a browser.
 
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,14 +23,14 @@ class _NewsScreenState extends State<NewsScreen> {
   // Loading indicator flag
   bool isLoading = true;
 
-  /// Called when the widget is inserted into the tree; triggers data load.
+  /// Loads news articles on init
   @override
   void initState() {
     super.initState();
     loadNews();
   }
 
-  /// Loads news articles from the NewsService API
+  /// Fetches news from the API
   Future<void> loadNews() async {
     try {
       final fetchedNews = await NewsService.fetchNews();
@@ -42,11 +43,12 @@ class _NewsScreenState extends State<NewsScreen> {
     }
   }
 
-  /// Renders the UI including loading spinner or list of news articles.
+  /// Renders background and either loading spinner or news list
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        // Background image
         Positioned.fill(
           child: Image.asset(
             'assets/images/background.jpg',
@@ -62,12 +64,12 @@ class _NewsScreenState extends State<NewsScreen> {
                     itemCount: news.length,
                     itemBuilder: (context, index) {
                       final article = news[index];
-                      // Each article is displayed as a ListTile-style row
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // News image
                             if (article['image'] != null && article['image'].isNotEmpty)
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
@@ -82,6 +84,7 @@ class _NewsScreenState extends State<NewsScreen> {
                             else
                               const SizedBox(width: 100, height: 70),
                             const SizedBox(width: 12),
+                            // News text info
                             Expanded(
                               child: InkWell(
                                 onTap: () => Navigator.push(
@@ -120,12 +123,11 @@ class _NewsScreenState extends State<NewsScreen> {
   }
 }
 
-/// Stateless widget that shows detailed information for a selected article.
+/// Detail screen for a specific news article.
 class NewsDetailScreen extends StatelessWidget {
   final Map<String, dynamic> article;
   const NewsDetailScreen({super.key, required this.article});
 
-  /// Renders image, headline, source, summary, and external link to full article.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,21 +137,25 @@ class NewsDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
+            // News image
             if (article['image'] != null && article['image'] != "")
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(article['image'], height: 200, fit: BoxFit.cover),
               ),
             const SizedBox(height: 20),
+            // Headline
             Text(article['headline'] ?? "", style: const TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
+            // Source
             Text("Source: ${article['source'] ?? ""}", style: const TextStyle(color: Colors.grey, fontSize: 16)),
             const SizedBox(height: 16),
+            // Summary
             Text(article['summary'] ?? "", style: const TextStyle(fontSize: 17, color: Colors.white)),
             const SizedBox(height: 32),
+            // Open article in external browser
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple, foregroundColor: Colors.white),
-              // Launch the article's URL in an external browser
               onPressed: () async {
                 final Uri url = Uri.parse(article['url']);
                 if (await canLaunchUrl(url)) await launchUrl(url);

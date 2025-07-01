@@ -1,3 +1,6 @@
+/// This widget displays a scrollable list of popular stocks in a tab.
+/// It fetches stock info using the StockService and navigates to the StockDetailsScreen on tap.
+
 import 'package:flutter/material.dart';
 import '../services/stock_service.dart';
 import '../screens/stock_details_screen.dart';
@@ -26,10 +29,12 @@ class _PopularTabState extends State<PopularTab> {
   @override
   void initState() {
     super.initState();
-    fetchStockData(); // Start fetching data when widget initializes
+    // Fetch stock data when the widget is initialized
+    fetchStockData();
   }
 
-  /// Fetches stock data for each symbol in the list
+  /// Fetches stock data for each symbol in the predefined list.
+  /// Uses parallel requests for better performance.
   Future<void> fetchStockData() async {
     try {
       // Fire all requests in parallel
@@ -72,6 +77,7 @@ class _PopularTabState extends State<PopularTab> {
         final color = diff > 0 ? Colors.green : (diff < 0 ? Colors.red : Colors.white);
 
         return GestureDetector(
+          // Navigate to stock details screen on tap
           onTap: () {
             Navigator.push(
               context,
@@ -84,6 +90,7 @@ class _PopularTabState extends State<PopularTab> {
             );
           },
           child: ListTile(
+            // Company logo or fallback
             leading: (stock['logo'] != null && stock['logo'].isNotEmpty)
                 ? Image.network(
                     stock['logo'],
@@ -93,6 +100,8 @@ class _PopularTabState extends State<PopularTab> {
                         CircleAvatar(child: Text(stock['symbol'][0])),
                   )
                 : CircleAvatar(child: Text(stock['symbol'][0])),
+
+            // Stock name and current price
             title: Text(
               stock['name'],
               style: const TextStyle(color: Colors.white),
@@ -101,6 +110,8 @@ class _PopularTabState extends State<PopularTab> {
               '\$${stock['price']}',
               style: const TextStyle(color: Colors.white),
             ),
+
+            // Price trend indicator
             trailing: Icon(Icons.show_chart, color: color),
           ),
         );

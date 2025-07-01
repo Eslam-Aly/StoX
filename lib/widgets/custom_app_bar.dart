@@ -1,11 +1,18 @@
+/// CustomAppBar is a reusable AppBar widget for the StoX app.
+/// It includes the app logo, a country/currency selector, search icon, and menu icon.
+
 import 'package:flutter/material.dart';
 import '../models/country_option.dart'; // Adjust path as needed
 
 /// Reusable AppBar with StoX logo, search, currency, and menu icons
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  // Currently selected country and currency
   final CountryOption selectedCountry;
+
+  // Callback when the country/currency is changed
   final ValueChanged<CountryOption> onCountryChanged;
 
+  /// Creates a CustomAppBar with the selected country and a callback for changes
   const CustomAppBar({
     super.key,
     required this.selectedCountry,
@@ -15,6 +22,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      // App title/logo
       title: const Text(
         'StoX',
         style: TextStyle(
@@ -26,7 +34,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.transparent,
       elevation: 0,
       actions: [
-
+        // Dropdown for selecting country/currency
         ConstrainedBox(
           constraints: BoxConstraints(maxWidth: 220),
           child: DropdownButtonHideUnderline(
@@ -86,12 +94,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
         ),
+        // Search button
         IconButton(
           icon: const Icon(Icons.search, color: Colors.white),
           onPressed: () {
             // Add search action here
           },
         ),
+        // Menu button
         IconButton(
           icon: const Icon(Icons.menu, color: Colors.white),
           onPressed: () {

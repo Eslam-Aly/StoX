@@ -1,19 +1,30 @@
+/// stock_service.dart
+/// Provides methods to fetch and cache stock data using the Finnhub API.
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 /// Service for fetching stock data from Finnhub API.
 class StockService {
+  // Finnhub API Key
   static const String _apiKey = 'd1dhgehr01qn1ojnmdcgd1dhgehr01qn1ojnmdd0';
 
+  // In-memory cache to store stock data per symbol
   static final Map<String, Map<String, dynamic>> _stockCache = {};
+
+  // Tracks when each symbol was last fetched
   static final Map<String, DateTime> _cacheTimestamps = {};
+
+  // Duration before cached data is considered stale
   static const Duration _cacheDuration = Duration(minutes: 2);
 
+  /// Fetches real-time quote and profile info for a given stock symbol.
+  /// Caches results to reduce API calls and improve performance.
   static Future<Map<String, dynamic>?> fetchStockInfo(String symbol) async {
     final now = DateTime.now();
     final lastFetch = _cacheTimestamps[symbol];
 
-    // Use cached data if within duration
+    // Return cached data if it exists and is still fresh
     if (_stockCache.containsKey(symbol) &&
         lastFetch != null &&
         now.difference(lastFetch) < _cacheDuration) {
@@ -39,6 +50,7 @@ class StockService {
           'name': profileData['name'] ?? symbol,
         };
 
+        // Save to cache
         _stockCache[symbol] = stockData;
         _cacheTimestamps[symbol] = now;
 
@@ -52,12 +64,14 @@ class StockService {
       return null;
     }
   }
-  /// Fetches a list of top US stocks with detailed info using fetchStockInfo.
+
+  /// Fetches a predefined list of popular US stocks using fetchStockInfo for each symbol.
   static Future<List<Map<String, dynamic>>> fetchAllStocks() async {
     final popularSymbols = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'NVDA', 'NFLX', 'AMD', 'INTC'];
 
     final List<Map<String, dynamic>> detailedStocks = [];
 
+    // Fetch detailed info for each popular stock symbol
     for (final symbol in popularSymbols) {
       final stock = await fetchStockInfo(symbol);
       if (stock != null) {
@@ -66,37 +80,5 @@ class StockService {
     }
 
     return detailedStocks;
-  }
-  /// Fetches historical candle/price data for a stock symbol.
-  static Future<List<Map<String, dynamic>>> fetchCandleData({
-    required String symbol,
-    String resolution = '30',
-    required int from,
-    required int to,
-  }) async {
-    final url = Uri.parse(
-      'https://finnhub.io/api/v1/stock/candle?symbol=$symbol&resolution=$resolution&from=$from&to=$to&token=$_apiKey',
-    );
-
-    try {
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data['s'] == 'ok') {
-          final timestamps = data['t'] as List<dynamic>;
-          final prices = data['c'] as List<dynamic>;
-          return List.generate(prices.length, (i) {
-            return {
-              'timestamp': timestamps[i],
-              'price': prices[i],
-            };
-          });
-        }
-      }
-      return [];
-    } catch (e) {
-      print('Error fetching candle data for $symbol: $e');
-      return [];
-    }
   }
 }

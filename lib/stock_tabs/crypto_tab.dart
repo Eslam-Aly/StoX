@@ -1,3 +1,6 @@
+/// CryptoTab widget for displaying real-time cryptocurrency data using Finnhub.
+/// Each item includes a symbol, icon, price, and price change.
+
 import 'package:flutter/material.dart';
 import '../services/crypto_service.dart';
 
@@ -109,31 +112,40 @@ class _CryptoTabState extends State<CryptoTab> {
 
   @override
   Widget build(BuildContext context) {
+    // Show loading indicator while fetching data
     return isLoading
         ? const Center(child: CircularProgressIndicator())
         : ListView.builder(
-      itemCount: cryptoList.length,
-      itemBuilder: (context, index) {
-        final crypto = cryptoList[index];
-        final symbol = crypto['symbol']
-            .replaceFirst('BINANCE:', '')
-            .replaceAll('USDT', '');
-        final price = (crypto['price'] as num).toDouble();
-        final prevClose = (crypto['prevClose'] as num).toDouble();
-        return ListTile(
-          leading: Icon(_getCryptoIcon(symbol), color: Colors.amber, size: 32),
-          title: Text(
-            symbol,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          subtitle: Text(
-            '\$${price.toStringAsFixed(2)}',
-            style: const TextStyle(color: Colors.white),
-          ),
+            itemCount: cryptoList.length,
+            itemBuilder: (context, index) {
+              final crypto = cryptoList[index];
+              // Clean up symbol display (remove 'BINANCE:' and 'USDT')
+              final symbol = crypto['symbol']
+                  .replaceFirst('BINANCE:', '')
+                  .replaceAll('USDT', '');
+              final price = (crypto['price'] as num).toDouble();
+              final prevClose = (crypto['prevClose'] as num).toDouble();
 
-          trailing: _buildPriceChangeText(price, prevClose),
-        );
-      },
-    );
+              return ListTile(
+                // Leading icon based on crypto symbol
+                leading: Icon(_getCryptoIcon(symbol), color: Colors.amber, size: 32),
+
+                // Symbol display
+                title: Text(
+                  symbol,
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+
+                // Current price display
+                subtitle: Text(
+                  '\$${price.toStringAsFixed(2)}',
+                  style: const TextStyle(color: Colors.white),
+                ),
+
+                // Price change display (green/red with percentage)
+                trailing: _buildPriceChangeText(price, prevClose),
+              );
+            },
+          );
   }
 }

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'screens/home_page.dart';
+import 'screens/login_screen.dart';
+import 'screens/signup_screen.dart';
 
-// Main app widget with modular routing setup
+// Entry point of the StoX application
 void main() {
   runApp(const MyApp());
 }
 
+// Root widget that sets up the application theme and routes
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -20,25 +23,19 @@ class MyApp extends StatelessWidget {
           bodyColor: Colors.white,
           displayColor: Colors.white,
         ),
+        // Custom AppBar styling for consistent dark theme
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.black,
           foregroundColor: Colors.white,
         ),
       ),
       // Application routes configuration
-      initialRoute: '/',
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case '/':
-            return MaterialPageRoute(builder: (_) => const HomePage());
-          // Additional routes can be added here as needed
-          default:
-            return MaterialPageRoute(
-              builder: (_) => const Scaffold(
-                body: Center(child: Text('Page not found')),
-              ),
-            );
-        }
+      initialRoute: '/login',
+      routes: {
+        '/': (context) => const HomePage(),
+        '/home': (context) => const HomePage(),
+        '/login': (context) => const LoginScreen(),
+        '/signup': (context) => const SignupScreen(),
       },
     );
   }

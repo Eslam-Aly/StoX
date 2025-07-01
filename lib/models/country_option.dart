@@ -1,3 +1,5 @@
+/// country_option.dart
+/// Defines the CountryOption model and a list of supported countries for use in currency and exchange selection.
 class CountryOption {
   final String name;
   final String flagUrl;

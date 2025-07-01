@@ -1,3 +1,7 @@
+/// portfolio_screen.dart
+/// Displays the user's wallet balance, total investment, and a list of owned assets
+/// such as stocks or cryptocurrencies. Each asset shows its name, value, and trend.
+
 import 'package:flutter/material.dart';
 
 class PortfolioScreen extends StatefulWidget {
@@ -12,6 +16,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        // Background image with dark overlay
         Positioned.fill(
           child: Image.asset(
             'assets/images/background.jpg',
@@ -38,10 +43,13 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Wallet balance
                 const Text("Wallet", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
                 const SizedBox(height: 4),
                 const Text("\$1,000", style: TextStyle(color: Colors.white, fontSize: 16)),
                 const SizedBox(height: 16),
+
+                // Total investment
                 const Text("Total Investment", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
                 const SizedBox(height: 4),
                 const Text("\$10,000", style: TextStyle(color: Colors.white, fontSize: 16)),
@@ -66,11 +74,13 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     );
   }
 
+  /// Helper widget to display an asset with price and change indicator.
   Widget _buildAssetRow(String name, String amount, String change, IconData trendIcon, Color trendColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         children: [
+          // Asset name and value
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,6 +94,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
             ),
           ),
           const SizedBox(width: 10),
+          // Icon for visualization
           Icon(Icons.pie_chart, color: Colors.white, size: 40),
         ],
       ),
