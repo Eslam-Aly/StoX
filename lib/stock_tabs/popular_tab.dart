@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/stock_service.dart';
+import '../screens/stock_details_screen.dart';
 
 /// A stateful widget that fetches and displays a list of popular stocks
 class PopularTab extends StatefulWidget {
@@ -70,32 +71,38 @@ class _PopularTabState extends State<PopularTab> {
         // Choose color based on price difference
         final color = diff > 0 ? Colors.green : (diff < 0 ? Colors.red : Colors.white);
 
-        return ListTile(
-          // If logo exists, show it; otherwise, show a circle with the first letter of the symbol
-          leading: (stock['logo'] != null && stock['logo'].isNotEmpty)
-              ? Image.network(
-            stock['logo'],
-            width: 50,
-            height: 50,
-            errorBuilder: (_, __, ___) =>
-                CircleAvatar(child: Text(stock['symbol'][0])),
-          )
-              : CircleAvatar(child: Text(stock['symbol'][0])),
-
-          // Company name
-          title: Text(
-            stock['name'],
-            style: const TextStyle(color: Colors.white),
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => StockDetailsScreen(
+                  stockSymbol: stock['symbol'],
+                  stockName: stock['name'],
+                ),
+              ),
+            );
+          },
+          child: ListTile(
+            leading: (stock['logo'] != null && stock['logo'].isNotEmpty)
+                ? Image.network(
+                    stock['logo'],
+                    width: 50,
+                    height: 50,
+                    errorBuilder: (_, __, ___) =>
+                        CircleAvatar(child: Text(stock['symbol'][0])),
+                  )
+                : CircleAvatar(child: Text(stock['symbol'][0])),
+            title: Text(
+              stock['name'],
+              style: const TextStyle(color: Colors.white),
+            ),
+            subtitle: Text(
+              '\$${stock['price']}',
+              style: const TextStyle(color: Colors.white),
+            ),
+            trailing: Icon(Icons.show_chart, color: color),
           ),
-
-          // Current stock price
-          subtitle: Text(
-            '\$${stock['price']}',
-            style: const TextStyle(color: Colors.white),
-          ),
-
-          // Trend icon colored based on price movement
-          trailing: Icon(Icons.show_chart, color: color),
         );
       },
     );

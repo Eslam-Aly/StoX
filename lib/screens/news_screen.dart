@@ -17,7 +17,6 @@ class NewsScreen extends StatefulWidget {
 }
 
 class _NewsScreenState extends State<NewsScreen> {
-  late CountryOption selectedCountry = countryOptions[0];
   // List to hold fetched news articles
   List<dynamic> news = [];
   // Loading indicator flag
@@ -56,15 +55,6 @@ class _NewsScreenState extends State<NewsScreen> {
         ),
         Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: CustomAppBar(
-            selectedCountry: selectedCountry,
-            onCountryChanged: (CountryOption newCountry) {
-              setState(() {
-                selectedCountry = newCountry;
-                // Optionally trigger filtering here
-              });
-            },
-          ),
           body: BackgroundWrapper(
             child: isLoading
                 ? const Center(child: CircularProgressIndicator())

@@ -52,23 +52,51 @@ class StockService {
       return null;
     }
   }
-  /// Fetches a list of all stock symbols with basic info
+  /// Fetches a list of top US stocks with detailed info using fetchStockInfo.
   static Future<List<Map<String, dynamic>>> fetchAllStocks() async {
-    final url = Uri.parse('https://finnhub.io/api/v1/stock/symbol?exchange=US&token=$_apiKey');
-    final response = await http.get(url);
+    final popularSymbols = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'NVDA', 'NFLX', 'AMD', 'INTC'];
 
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
+    final List<Map<String, dynamic>> detailedStocks = [];
 
-      return data
-          .where((item) => item['symbol'] != null && item['description'] != null)
-          .map<Map<String, dynamic>>((item) => {
-        'symbol': item['symbol'],
-        'name': item['description'],
-      })
-          .toList();
-    } else {
-      throw Exception('Failed to load all stocks');
+    for (final symbol in popularSymbols) {
+      final stock = await fetchStockInfo(symbol);
+      if (stock != null) {
+        detailedStocks.add(stock);
+      }
+    }
+
+    return detailedStocks;
+  }
+  /// Fetches historical candle/price data for a stock symbol.
+  static Future<List<Map<String, dynamic>>> fetchCandleData({
+    required String symbol,
+    String resolution = '30',
+    required int from,
+    required int to,
+  }) async {
+    final url = Uri.parse(
+      'https://finnhub.io/api/v1/stock/candle?symbol=$symbol&resolution=$resolution&from=$from&to=$to&token=$_apiKey',
+    );
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['s'] == 'ok') {
+          final timestamps = data['t'] as List<dynamic>;
+          final prices = data['c'] as List<dynamic>;
+          return List.generate(prices.length, (i) {
+            return {
+              'timestamp': timestamps[i],
+              'price': prices[i],
+            };
+          });
+        }
+      }
+      return [];
+    } catch (e) {
+      print('Error fetching candle data for $symbol: $e');
+      return [];
     }
   }
 }

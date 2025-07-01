@@ -26,25 +26,26 @@ class StockListScreen extends StatelessWidget {
           length: 4,
           child: Scaffold(
             backgroundColor: Colors.transparent,
-            appBar: AppBar(
-              title: const Text("StoX", style: TextStyle(fontWeight: FontWeight.bold)),
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              bottom: const TabBar(
-                tabs: [
-                  Tab(text: 'Popular'),
-                  Tab(text: 'Stocks'),
-                  Tab(text: 'Crypto'),
-                  Tab(text: 'Pro'),
-                ],
-              ),
-            ),
-            body: const TabBarView(
+            body: Column(
               children: [
-                PopularTab(),
-                StocksTab(),
-                CryptoTab(),
-                ProTab(),
+                const TabBar(
+                  tabs: [
+                    Tab(text: 'Popular'),
+                    Tab(text: 'Stocks'),
+                    Tab(text: 'Crypto'),
+                    Tab(text: 'Pro'),
+                  ],
+                ),
+                const Expanded(
+                  child: TabBarView(
+                    children: [
+                      PopularTab(),
+                      StocksTab(),
+                      CryptoTab(),
+                      ProTab(),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

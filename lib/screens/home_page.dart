@@ -6,6 +6,9 @@ import 'news_screen.dart';
 import 'portfolio_screen.dart';
 import 'profile_screen.dart';
 
+import '../widgets/custom_app_bar.dart';
+import '../models/country_option.dart';
+
 /// Main HomePage widget that manages bottom navigation and screen switching
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,6 +21,14 @@ class _HomePageState extends State<HomePage> {
   // Keeps track of the currently selected index in the BottomNavigationBar
   int _selectedIndex = 0;
 
+  CountryOption _selectedCountry = countryOptions.first;
+
+  void _handleCountryChange(CountryOption newCountry) {
+    setState(() {
+      _selectedCountry = newCountry;
+    });
+  }
+
   // List of widgets corresponding to each tab in the BottomNavigationBar
   final List<Widget> _pages = [
     const StockListScreen(),   // Home screen with stock tabs
@@ -29,6 +40,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(
+        selectedCountry: _selectedCountry,
+        onCountryChanged: _handleCountryChange,
+      ),
       // Display the currently selected screen
       body: _pages[_selectedIndex],
 
