@@ -1,19 +1,15 @@
-/// portfolio_screen.dart
-/// Displays the user's wallet balance, total investment, and a list of owned assets
-/// such as stocks or cryptocurrencies. Each asset shows its name, value, and trend.
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/portfolio_provider.dart';
+import '../widgets/stock_list_item.dart';
 
-class PortfolioScreen extends StatefulWidget {
+class PortfolioScreen extends StatelessWidget {
   const PortfolioScreen({super.key});
 
   @override
-  State<PortfolioScreen> createState() => _PortfolioScreenState();
-}
-
-class _PortfolioScreenState extends State<PortfolioScreen> {
-  @override
   Widget build(BuildContext context) {
+    final portfolio = Provider.of<PortfolioProvider>(context).portfolio;
+
     return Stack(
       children: [
         // Background image with dark overlay
@@ -32,11 +28,6 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Wallet balance
-                const Text("Wallet", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
-                const SizedBox(height: 4),
-                const Text("\$1,000", style: TextStyle(color: Colors.white, fontSize: 16)),
-                const SizedBox(height: 16),
 
                 // Total investment
                 const Text("Total Investment", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
@@ -44,15 +35,21 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 const Text("\$10,000", style: TextStyle(color: Colors.white, fontSize: 16)),
                 const Divider(color: Colors.white54, height: 32),
 
-                // Asset list
+                // Dynamic asset list
                 Expanded(
-                  child: ListView(
-                    children: [
-                      _buildAssetRow("Bitcoin", "\$3,500", "-1053.7 (-1.23%)", Icons.trending_down, Colors.red),
-                      _buildAssetRow("Gold", "\$2,500", "+1053.7 (+1.23%)", Icons.trending_up, Colors.green),
-                      _buildAssetRow("Ethereum", "\$3,000", "-1053.7 (-1.23%)", Icons.trending_down, Colors.red),
-                      _buildAssetRow("NVIDIA", "\$1,000", "-1053.7 (-1.23%)", Icons.trending_down, Colors.red),
-                    ],
+                  child: portfolio.isEmpty
+                      ? const Center(
+                    child: Text(
+                      "Your portfolio is empty.",
+                      style: TextStyle(color: Colors.white70, fontSize: 16),
+                    ),
+                  )
+                      : ListView.builder(
+                    itemCount: portfolio.length,
+                    itemBuilder: (context, index) {
+                      final stock = portfolio[index];
+                      return StockListItem(stock: stock);
+                    },
                   ),
                 ),
               ],
@@ -60,29 +57,6 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  /// Helper widget to display an asset with price and change indicator.
-  Widget _buildAssetRow(String name, String amount, String change, IconData trendIcon, Color trendColor) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Row(
-        children: [
-          // Asset name and value
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
-                const SizedBox(height: 4),
-                Text(amount, style: const TextStyle(color: Colors.white)),
-              ],
-            ),
-          ),
-          Text(change, style: TextStyle(color: trendColor, fontSize: 12)),
-        ],
-      ),
     );
   }
 }

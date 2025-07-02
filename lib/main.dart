@@ -3,9 +3,17 @@ import 'screens/home_page.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
 
+import 'package:provider/provider.dart';
+import 'providers/portfolio_provider.dart';
+
 // Entry point of the StoX application
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => PortfolioProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 // Root widget that sets up the application theme and routes

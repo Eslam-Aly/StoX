@@ -98,12 +98,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           },
         ),
         // Menu button
-        IconButton(
-          icon: const Icon(Icons.menu, color: Colors.white),
-          onPressed: () {
-            // Add menu action here
-          },
-        ),
+
       ],
     );
   }

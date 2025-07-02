@@ -70,16 +70,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 inactiveTrackColor: Colors.white24,
               ),
               ListTile(
-                title: const Text('Portfolio', style: TextStyle(color: Colors.white)),
-                trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const PortfolioScreen()),
-                  );
-                },
-              ),
-              ListTile(
                 title: const Text('Privacy Policy', style: TextStyle(color: Colors.white)),
                 trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white),
                 onTap: () {

@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import '../services/stock_service.dart';
+import '../screens/stock_details_screen.dart';
 
 /// A stateful widget that displays a list of stock data by fetching
 /// all available symbols and their details from the Finnhub API.
@@ -84,31 +85,47 @@ class _StocksTabState extends State<StocksTab> {
         final diff = price - prevClose;
         final color = diff > 0 ? Colors.green : (diff < 0 ? Colors.red : Colors.white);
 
-        return ListTile(
-          // Logo or fallback avatar
-          leading: (stock['logo'] != null && stock['logo'].isNotEmpty)
-              ? Image.network(
-                  stock['logo'],
-                  width: 50,
-                  height: 50,
-                  errorBuilder: (_, __, ___) => CircleAvatar(child: Text(stock['symbol'][0])),
-                )
-              : CircleAvatar(child: Text(stock['symbol'][0])),
+        return GestureDetector(
+            // Navigate to stock details screen on tap
+            onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => StockDetailsScreen(
+                stockSymbol: stock['symbol'],
+                stockName: stock['name'],
+              ),
+            ),
+          );
+         },
 
-          // Company name
-          title: Text(
-            stock['name'],
-            style: const TextStyle(color: Colors.white),
+
+          child: ListTile(
+            // Logo or fallback avatar
+            leading: (stock['logo'] != null && stock['logo'].isNotEmpty)
+                ? Image.network(
+                    stock['logo'],
+                    width: 50,
+                    height: 50,
+                    errorBuilder: (_, __, ___) => CircleAvatar(child: Text(stock['symbol'][0])),
+                  )
+                : CircleAvatar(child: Text(stock['symbol'][0])),
+
+            // Company name
+            title: Text(
+              stock['name'],
+              style: const TextStyle(color: Colors.white),
+            ),
+
+            // Current price
+            subtitle: Text(
+              '\$${stock['price']}',
+              style: const TextStyle(color: Colors.white),
+            ),
+
+            // Trend icon
+            trailing: Icon(Icons.show_chart, color: color),
           ),
-
-          // Current price
-          subtitle: Text(
-            '\$${stock['price']}',
-            style: const TextStyle(color: Colors.white),
-          ),
-
-          // Trend icon
-          trailing: Icon(Icons.show_chart, color: color),
         );
       },
     );

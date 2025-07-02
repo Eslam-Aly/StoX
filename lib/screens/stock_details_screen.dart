@@ -4,7 +4,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:provider/provider.dart';
 import '../services/stock_chart_service.dart';
+import '../providers/portfolio_provider.dart';
 
 class StockDetailsScreen extends StatefulWidget {
   final String stockSymbol;
@@ -152,6 +154,51 @@ class _StockDetailsScreenState extends State<StockDetailsScreen> {
                 _alertButton("+10"),
                 _alertButton("custom"),
               ],
+            ),
+            const Divider(height: 32),
+
+            // Portfolio actions
+            Consumer<PortfolioProvider>(
+              builder: (context, portfolio, _) {
+                final isInPortfolio = portfolio.portfolio
+                    .any((item) => item['name'] == widget.stockSymbol);
+
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: isInPortfolio
+                          ? null
+                          : () {
+                              portfolio.addStock({
+                                "name": widget.stockSymbol,
+                                "amount": "\$0.00",
+                                "change": "0.0 (0.00%)",
+                                "icon": Icons.trending_flat,
+                                "color": Colors.grey,
+                              });
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text("Add"),
+                    ),
+                    ElevatedButton(
+                      onPressed: isInPortfolio
+                          ? () {
+                              portfolio.removeStock(widget.stockSymbol);
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text("Remove"),
+                    ),
+                  ],
+                );
+              },
             ),
           ],
         ),
