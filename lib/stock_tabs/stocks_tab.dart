@@ -88,15 +88,18 @@ class _StocksTabState extends State<StocksTab> {
         return GestureDetector(
             // Navigate to stock details screen on tap
             onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => StockDetailsScreen(
-                stockSymbol: stock['symbol'],
-                stockName: stock['name'],
-              ),
-            ),
-          );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => StockDetailsScreen(
+                    stockSymbol: stock['symbol'],
+                    stockName: stock['name'],
+                    price: (stock['price'] as num?)?.toDouble(),
+                    prevClose: (stock['prevClose'] as num?)?.toDouble(),
+                    logo: stock['logo'],
+                  ),
+                ),
+              );
          },
 
 

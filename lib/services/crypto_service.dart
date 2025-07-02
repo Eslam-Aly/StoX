@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 
 /// Service for fetching cryptocurrency data from Finnhub API.
 class CryptoService {
@@ -66,3 +67,27 @@ class CryptoService {
     }
   }
 }
+  IconData getCryptoIcon(String symbol) {
+    switch (symbol.toUpperCase()) {
+      case 'BTC':
+        return Icons.currency_bitcoin;
+      case 'ETH':
+        return Icons.auto_graph;
+      case 'DOGE':
+        return Icons.pets;
+      case 'SOL':
+        return Icons.flash_on;
+      case 'ADA':
+        return Icons.circle;
+      case 'XRP':
+        return Icons.waves;
+      case 'MATIC':
+        return Icons.polymer;
+      case 'LTC':
+        return Icons.light_mode;
+      case 'BCH':
+        return Icons.account_balance_wallet;
+      default:
+        return Icons.token;
+    }
+  }

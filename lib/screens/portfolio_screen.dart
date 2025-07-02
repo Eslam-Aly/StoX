@@ -32,7 +32,14 @@ class PortfolioScreen extends StatelessWidget {
                 // Total investment
                 const Text("Total Investment", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
                 const SizedBox(height: 4),
-                const Text("\$10,000", style: TextStyle(color: Colors.white, fontSize: 16)),
+                Consumer<PortfolioProvider>(
+                  builder: (context, portfolio, _) {
+                    return Text(
+                      "\$${portfolio.totalInvestment.toStringAsFixed(2)}",
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
+                    );
+                  },
+                ),
                 const Divider(color: Colors.white54, height: 32),
 
                 // Dynamic asset list

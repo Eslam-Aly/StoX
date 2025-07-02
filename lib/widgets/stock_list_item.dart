@@ -8,10 +8,16 @@ class StockListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final price = (stock['price'] as num).toDouble();
-    final prevClose = (stock['prevClose'] as num).toDouble();
+    final price = (stock['price'] is num) ? (stock['price'] as num).toDouble() : 0.0;
+    final prevClose = (stock['prevClose'] is num) ? (stock['prevClose'] as num).toDouble() : 0.0;
     final diff = price - prevClose;
     final color = diff > 0 ? Colors.green : (diff < 0 ? Colors.red : Colors.white);
+    final quantity = (stock['quantity'] as num?)?.toDouble() ?? 1.0;
+    final total = price * quantity;
+
+    final logo = stock['logo'];
+    final symbol = stock['symbol'] ?? '?';
+    final name = stock['name'] ?? 'Unknown';
 
     return GestureDetector(
       onTap: () {
@@ -21,26 +27,29 @@ class StockListItem extends StatelessWidget {
             builder: (_) => StockDetailsScreen(
               stockSymbol: stock['symbol'],
               stockName: stock['name'],
+              price: (stock['price'] as num?)?.toDouble(),
+              prevClose: (stock['prevClose'] as num?)?.toDouble(),
+              logo: stock['logo'],
             ),
           ),
         );
       },
       child: ListTile(
-        leading: (stock['logo'] != null && stock['logo'].isNotEmpty)
+        leading: (logo != null && logo is String && logo.isNotEmpty)
             ? Image.network(
-          stock['logo'],
+          logo,
           width: 50,
           height: 50,
-          errorBuilder: (_, __, ___) => CircleAvatar(child: Text(stock['symbol'][0])),
+          errorBuilder: (_, __, ___) => CircleAvatar(child: Text(symbol[0])),
         )
-            : CircleAvatar(child: Text(stock['symbol'][0])),
+            : CircleAvatar(child: Text(symbol[0])),
 
         title: Text(
-          stock['name'],
+          name,
           style: const TextStyle(color: Colors.white),
         ),
         subtitle: Text(
-          '\$${price.toStringAsFixed(2)}',
+          '${quantity.toStringAsFixed(0)} × \$${price.toStringAsFixed(2)} = \$${total.toStringAsFixed(2)}',
           style: const TextStyle(color: Colors.white),
         ),
         trailing: Icon(Icons.show_chart, color: color),

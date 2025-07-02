@@ -122,6 +122,9 @@ class _CryptoTabState extends State<CryptoTab> {
                 builder: (_) => StockDetailsScreen(
                   stockSymbol: rawSymbol,
                   stockName: displaySymbol,
+                  price: price,
+                  prevClose: prevClose,
+                  logo: crypto['logo'],
                 ),
               ),
             );
