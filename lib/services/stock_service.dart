@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 /// Service for fetching stock data from Finnhub API.
 class StockService {
   // Finnhub API Key
-  static const String _apiKey = 'd1dhgehr01qn1ojnmdcgd1dhgehr01qn1ojnmdd0';
+  static const String _apiKey = 'd1i23dpr01qhsrhcrmdgd1i23dpr01qhsrhcrme0';
 
   // In-memory cache to store stock data per symbol
   static final Map<String, Map<String, dynamic>> _stockCache = {};

@@ -27,17 +27,6 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
         ),
         Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            title: const Text("StoX", style: TextStyle(fontWeight: FontWeight.bold)),
-            actions: const [
-              Icon(Icons.search),
-              SizedBox(width: 10),
-              Icon(Icons.more_vert),
-              SizedBox(width: 10),
-            ],
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-          ),
           body: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -85,17 +74,13 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                Text(name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
                 const SizedBox(height: 4),
                 Text(amount, style: const TextStyle(color: Colors.white)),
-                const SizedBox(height: 2),
-                Text(change, style: TextStyle(color: trendColor, fontSize: 12)),
               ],
             ),
           ),
-          const SizedBox(width: 10),
-          // Icon for visualization
-          Icon(Icons.pie_chart, color: Colors.white, size: 40),
+          Text(change, style: TextStyle(color: trendColor, fontSize: 12)),
         ],
       ),
     );

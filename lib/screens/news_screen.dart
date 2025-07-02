@@ -66,31 +66,31 @@ class _NewsScreenState extends State<NewsScreen> {
                       final article = news[index];
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // News image
-                            if (article['image'] != null && article['image'].isNotEmpty)
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.network(
-                                  article['image'],
-                                  width: 100,
-                                  height: 70,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => const Icon(Icons.article, color: Colors.white),
-                                ),
-                              )
-                            else
-                              const SizedBox(width: 100, height: 70),
-                            const SizedBox(width: 12),
-                            // News text info
-                            Expanded(
-                              child: InkWell(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => NewsDetailScreen(article: article)),
-                                ),
+                        child: InkWell(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => NewsDetailScreen(article: article)),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // News image
+                              if (article['image'] != null && article['image'].isNotEmpty)
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    article['image'],
+                                    width: 100,
+                                    height: 70,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => const Icon(Icons.article, color: Colors.white),
+                                  ),
+                                )
+                              else
+                                const SizedBox(width: 100, height: 70),
+                              const SizedBox(width: 12),
+                              // News text info
+                              Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -110,8 +110,8 @@ class _NewsScreenState extends State<NewsScreen> {
                                   ],
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     },

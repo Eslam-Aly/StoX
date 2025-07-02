@@ -23,13 +23,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       // App title/logo
-      title: const Text(
-        'StoX',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-          fontSize: 26,
-        ),
+      title: Image.asset(
+        'assets/images/logo.png',
+        height: 40,
       ),
       backgroundColor: Colors.transparent,
       elevation: 0,

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import 'signup_screen.dart';
 import '../widgets/background_wrapper.dart';
+import 'stock_list_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -32,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     if (success) {
-      // Navigate to home screen after login
+      // Navigate to main app screen after login
       Navigator.pushReplacementNamed(context, '/home');
     }
   }

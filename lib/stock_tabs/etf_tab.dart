@@ -1,23 +1,23 @@
-/// This widget displays a scrollable list of popular stocks in a tab.
-/// It fetches stock info using the StockService and navigates to the StockDetailsScreen on tap.
+/// This widget displays a scrollable list of popular ETFs in a tab.
+/// It fetches ETF info using the StockService and navigates to the StockDetailsScreen on tap.
 
 import 'package:flutter/material.dart';
 import '../services/stock_service.dart';
 import '../screens/stock_details_screen.dart';
 
-/// A stateful widget that fetches and displays a list of popular stocks
-class PopularTab extends StatefulWidget {
-  const PopularTab({super.key});
+/// A stateful widget that fetches and displays a list of popular ETFs
+class EtfTab extends StatefulWidget {
+  const EtfTab({super.key});
 
   @override
-  State<PopularTab> createState() => _PopularTabState();
+  State<EtfTab> createState() => _EtfTabState();
 }
 
-class _PopularTabState extends State<PopularTab> {
-  // List of hardcoded popular stock symbols to display
+class _EtfTabState extends State<EtfTab> {
+  // List of hardcoded popular ETF symbols to display
   final List<String> symbols = [
-    'AAPL', 'GOOG', 'MSFT', 'TSLA', 'AMZN', 'NVDA', 'META', 'NFLX',
-    'BABA', 'BA', 'ORCL', 'INTC', 'PYPL', 'DIS', 'V', 'JPM', 'IBM', 'PEP', 'KO', 'MCD',
+    'SPY', 'QQQ', 'DIA', 'VTI', 'IWM', 'XLK', 'XLF', 'ARKK', 'VOO', 'EFA',
+    'EEM', 'TLT', 'XLE', 'XLY', 'XLI', 'XLC', 'XLV', 'XLU', 'XLB', 'VNQ',
   ];
 
   // This will hold the stock data for each fetched symbol

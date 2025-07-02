@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../stock_tabs/popular_tab.dart';
+import '../stock_tabs/etf_tab.dart';
 import '../stock_tabs/stocks_tab.dart';
 import '../stock_tabs/crypto_tab.dart';
 import '../stock_tabs/pro_tab.dart';
@@ -36,8 +36,9 @@ class StockListScreen extends StatelessWidget {
                 // Tab navigation bar
                 const TabBar(
                   tabs: [
-                    Tab(text: 'Popular'),
+
                     Tab(text: 'Stocks'),
+                    Tab(text: 'ETFs'),
                     Tab(text: 'Crypto'),
                     Tab(text: 'Pro'),
                   ],
@@ -46,8 +47,8 @@ class StockListScreen extends StatelessWidget {
                 const Expanded(
                   child: TabBarView(
                     children: [
-                      PopularTab(),
                       StocksTab(),
+                      EtfTab(),
                       CryptoTab(),
                       ProTab(),
                     ],
