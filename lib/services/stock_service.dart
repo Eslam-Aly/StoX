@@ -3,12 +3,10 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Service for fetching stock data from Finnhub API.
 class StockService {
-  // Finnhub API Key
-  static const String _apiKey = 'd1i23dpr01qhsrhcrmdgd1i23dpr01qhsrhcrme0';
-
   // In-memory cache to store stock data per symbol
   static final Map<String, Map<String, dynamic>> _stockCache = {};
 
@@ -31,8 +29,10 @@ class StockService {
       return _stockCache[symbol];
     }
 
-    final quoteUrl = Uri.parse('https://finnhub.io/api/v1/quote?symbol=$symbol&token=$_apiKey');
-    final profileUrl = Uri.parse('https://finnhub.io/api/v1/stock/profile2?symbol=$symbol&token=$_apiKey');
+    final baseUrl = dotenv.env['BASE_URL'];
+    final apiKey = dotenv.env['API_KEY'];
+    final quoteUrl = Uri.parse('$baseUrl/quote?symbol=$symbol&token=$apiKey');
+    final profileUrl = Uri.parse('$baseUrl/stock/profile2?symbol=$symbol&token=$apiKey');
 
     try {
       final quoteResponse = await http.get(quoteUrl);

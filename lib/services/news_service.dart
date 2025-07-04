@@ -3,12 +3,10 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Service class responsible for fetching and caching news articles from the Finnhub API.
 class NewsService {
-  // Finnhub API key
-  static const String _apiKey = 'd1dhgehr01qn1ojnmdcgd1dhgehr01qn1ojnmdd0';
-
   // Cached news articles (in-memory)
   static List<dynamic>? _cachedNews;
 
@@ -21,7 +19,8 @@ class NewsService {
   /// Fetches general news articles from Finnhub or returns cached results if fresh.
   static Future<List<dynamic>> fetchNews() async {
     final now = DateTime.now();
-
+    final apiKey = dotenv.env['API_KEY'];
+    final baseUrl = dotenv.env['BASE_URL'];
     // Return cached news if available and still valid
     if (_cachedNews != null &&
         _lastFetched != null &&
@@ -30,7 +29,7 @@ class NewsService {
     }
 
     // If not cached or expired, fetch from API
-    final url = Uri.parse('https://finnhub.io/api/v1/news?category=general&token=$_apiKey');
+    final url = Uri.parse('$baseUrl/news?category=general&token=$apiKey');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {

@@ -1,16 +1,13 @@
 /// crypto_service.dart
 /// Service for fetching real-time cryptocurrency data (e.g., BTCUSDT) from Finnhub API.
 /// Implements simple in-memory caching to reduce redundant network calls.
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 /// Service for fetching cryptocurrency data from Finnhub API.
 class CryptoService {
-  // Finnhub API key
-  static const String _apiKey = 'd1dhgehr01qn1ojnmdcgd1dhgehr01qn1ojnmdd0';
-
   // In-memory cache for storing fetched crypto data
   static final Map<String, Map<String, dynamic>> _cache = {};
 
@@ -24,7 +21,8 @@ class CryptoService {
   /// Symbol format: BINANCE:BTCUSDT, BINANCE:ETHUSDT, etc.
   static Future<Map<String, dynamic>?> fetchCryptoInfo(String symbol) async {
     final now = DateTime.now();
-
+    final apiKey = dotenv.env['API_KEY'];
+    final baseUrl = dotenv.env['BASE_URL'];
     // Return cached data if available and still fresh
     if (_cache.containsKey(symbol) &&
         _cacheTimestamps.containsKey(symbol) &&
@@ -33,7 +31,7 @@ class CryptoService {
     }
 
     // Construct the API URL for fetching quote data
-    final quoteUrl = Uri.parse('https://finnhub.io/api/v1/quote?symbol=$symbol&token=$_apiKey');
+    final quoteUrl = Uri.parse('$baseUrl/quote?symbol=$symbol&token=$apiKey');
 
     try {
       // Perform the HTTP GET request

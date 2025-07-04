@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 import 'screens/home_page.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
-
 import 'package:provider/provider.dart';
 import 'providers/portfolio_provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 // Entry point of the StoX application
-void main() {
+Future<void> main() async {
+  //This line is crucial for any async before runApp
+  WidgetsFlutterBinding.ensureInitialized();
+  //Load environment variables
+  await dotenv.load();
+  //Run the app
   runApp(
     ChangeNotifierProvider(
       create: (_) => PortfolioProvider(),
@@ -15,6 +21,8 @@ void main() {
     ),
   );
 }
+
+
 
 // Root widget that sets up the application theme and routes
 class MyApp extends StatelessWidget {

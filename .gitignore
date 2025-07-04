@@ -47,3 +47,5 @@ ios/Flutter/Flutter.podspec
 
 # Generated plugin files
 lib/generated_plugin_registrant.dart
+
+.env

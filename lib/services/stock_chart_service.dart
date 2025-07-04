@@ -4,11 +4,10 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 class StockChartService {
-  // Finnhub API key (free plan token)
-  static const String _apiKey = 'd1dhgehr01qn1ojnmdcgd1dhgehr01qn1ojnmdd0';
-
   /// Fetches candlestick data for the given stock symbol and resolution.
   /// Returns a list of timestamp-price pairs for chart plotting.
   static Future<List<Map<String, dynamic>>> fetchCandleData({
@@ -18,17 +17,18 @@ class StockChartService {
     // Generate UNIX timestamps for the last 30 days
     final int toTs = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final int fromTs = DateTime.now().subtract(const Duration(days: 30)).millisecondsSinceEpoch ~/ 1000;
-
+    final baseUrl = dotenv.env['BASE_URL'];
+    final apiKey = dotenv.env['API_KEY'];
     // Build the request URL
     final url = Uri.parse(
-      'https://finnhub.io/api/v1/stock/candle?symbol=$symbol&resolution=$resolution&from=$fromTs&to=$toTs&token=$_apiKey',
+      '$baseUrl/stock/candle?symbol=$symbol&resolution=$resolution&from=$fromTs&to=$toTs&token=$apiKey',
     );
 
     // Debugging logs
     print('[DEBUG] symbol=$symbol');
     print('[DEBUG] resolution=$resolution');
     print('[DEBUG] from=$fromTs to=$toTs');
-    print('[DEBUG] token=$_apiKey');
+    print('[DEBUG] token=$apiKey');
     print('[DEBUG] Request URL: $url');
 
     try {
