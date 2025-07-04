@@ -8,6 +8,7 @@ import '../providers/portfolio_provider.dart';
 import '../services/crypto_service.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../widgets/background_wrapper.dart';
+import '../providers/country_provider.dart';
 
 class StockDetailsScreen extends StatefulWidget {
   final String stockSymbol;
@@ -36,7 +37,7 @@ class _StockDetailsScreenState extends State<StockDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    fetchChart();
+    updateChartForRange(selectedRange);
   }
 
   String selectedRange = "1M";
@@ -84,6 +85,7 @@ class _StockDetailsScreenState extends State<StockDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currencySymbol = Provider.of<CountryProvider>(context).currencySymbol;
     return BackgroundWrapper(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -166,7 +168,7 @@ class _StockDetailsScreenState extends State<StockDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      widget.price != null ? "\$${widget.price!.toStringAsFixed(2)}" : "--",
+                      widget.price != null ? "$currencySymbol${widget.price!.toStringAsFixed(2)}" : "--",
                       style: const TextStyle(fontSize: 18),
                     ),
                     if (widget.price != null && widget.prevClose != null)

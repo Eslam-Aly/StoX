@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import '../providers/country_provider.dart';
 
 class PortfolioProvider extends ChangeNotifier {
   final List<Map<String, dynamic>> _portfolio = [];
@@ -23,11 +24,11 @@ class PortfolioProvider extends ChangeNotifier {
     return _portfolio.any((stock) => stock['symbol'] == symbol);
   }
 
-  double get totalInvestment {
+  double totalInvestment(double exchangeRate) {
     return _portfolio.fold(0.0, (sum, stock) {
       final price = (stock['price'] as num?)?.toDouble() ?? 0.0;
       final quantity = (stock['quantity'] as num?)?.toDouble() ?? 1.0;
-      return sum + (price * quantity);
+      return sum + (price * quantity * exchangeRate);
     });
   }
 }

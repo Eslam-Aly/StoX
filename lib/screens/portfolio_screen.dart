@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/portfolio_provider.dart';
 import '../widgets/stock_list_item.dart';
+import '../providers/country_provider.dart';
 
 class PortfolioScreen extends StatelessWidget {
   const PortfolioScreen({super.key});
@@ -32,10 +33,14 @@ class PortfolioScreen extends StatelessWidget {
                 // Total investment
                 const Text("Total Investment", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
                 const SizedBox(height: 4),
-                Consumer<PortfolioProvider>(
-                  builder: (context, portfolio, _) {
+                Consumer2<PortfolioProvider, CountryProvider>(
+                  builder: (context, portfolio, countryProvider, _) {
+                    final symbol = countryProvider.currencySymbol;
+                    final rate = countryProvider.exchangeRate;
+                    final total = portfolio.totalInvestment(rate);
+
                     return Text(
-                      "\$${portfolio.totalInvestment.toStringAsFixed(2)}",
+                      "$symbol${total.toStringAsFixed(2)}",
                       style: const TextStyle(color: Colors.white, fontSize: 16),
                     );
                   },

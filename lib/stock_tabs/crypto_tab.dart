@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../services/crypto_service.dart';
 import '../screens/stock_details_screen.dart';
+import '../providers/country_provider.dart';
 
 class CryptoTab extends StatefulWidget {
   const CryptoTab({super.key});
@@ -35,30 +37,48 @@ class _CryptoTabState extends State<CryptoTab> {
 
   List<Map<String, dynamic>> cryptoList = [];
   bool isLoading = true;
+  String? lastCurrencyCode;
 
   @override
   void initState() {
     super.initState();
-    loadCryptoData();
+    WidgetsBinding.instance.addPostFrameCallback((_) => loadCryptoDataSequentially());
   }
 
-  Future<void> loadCryptoData() async {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentCurrencyCode = Provider.of<CountryProvider>(context).selectedCountry.currencyCode;
+
+    if (lastCurrencyCode != null && currentCurrencyCode != lastCurrencyCode) {
+      setState(() {
+        isLoading = true;
+        cryptoList.clear();
+      });
+      loadCryptoDataSequentially();
+    }
+    lastCurrencyCode = currentCurrencyCode;
+  }
+
+  Future<void> loadCryptoDataSequentially() async {
     List<Map<String, dynamic>> tempList = [];
 
     for (String symbol in symbols) {
-      final crypto = await CryptoService.fetchCryptoInfo(symbol);
+      final crypto = await CryptoService.fetchCryptoInfo(symbol, context);
       if (crypto != null) {
         tempList.add(crypto);
       }
+      await Future.delayed(const Duration(milliseconds: 100)); // ⏳ Delay
     }
 
+    if (!mounted) return;
     setState(() {
       cryptoList = tempList;
       isLoading = false;
     });
   }
 
-  Widget _buildPriceChangeText(double price, double prevClose) {
+  Widget _buildPriceChangeText(double price, double prevClose, String symbol) {
     final change = price - prevClose;
     final isGain = change >= 0;
     final color = isGain ? Colors.green : Colors.red;
@@ -66,7 +86,7 @@ class _CryptoTabState extends State<CryptoTab> {
     final percentage = (change.abs() / prevClose * 100).toStringAsFixed(2);
 
     return Text(
-      '$sign\$${change.abs().toStringAsFixed(2)} ($percentage%)',
+      '$sign$symbol${change.abs().toStringAsFixed(2)} ($percentage%)',
       style: TextStyle(color: color, fontWeight: FontWeight.bold),
     );
   }
@@ -103,48 +123,56 @@ class _CryptoTabState extends State<CryptoTab> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? const Center(child: CircularProgressIndicator())
-        : ListView.builder(
-      itemCount: cryptoList.length,
-      itemBuilder: (context, index) {
-        final crypto = cryptoList[index];
-        final rawSymbol = crypto['symbol'];
-        final displaySymbol = rawSymbol.replaceFirst('BINANCE:', '').replaceAll('USDT', '');
-        final price = (crypto['price'] as num).toDouble();
-        final prevClose = (crypto['prevClose'] as num).toDouble();
+    return Consumer<CountryProvider>(
+      builder: (context, countryProvider, _) {
+        final currencySymbol = countryProvider.currencySymbol;
 
-        return InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => StockDetailsScreen(
-                  stockSymbol: rawSymbol,
-                  stockName: displaySymbol,
-                  price: price,
-                  prevClose: prevClose,
-                  logo: crypto['logo'],
+        if (isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return ListView.builder(
+          itemCount: cryptoList.length,
+          itemBuilder: (context, index) {
+            final crypto = cryptoList[index];
+            final rawSymbol = crypto['symbol'];
+            final displaySymbol = rawSymbol.replaceFirst('BINANCE:', '').replaceAll('USDT', '');
+            final price = (crypto['price'] as num).toDouble();
+            final prevClose = (crypto['prevClose'] as num).toDouble();
+
+            return InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => StockDetailsScreen(
+                      stockSymbol: rawSymbol,
+                      stockName: displaySymbol,
+                      price: price,
+                      prevClose: prevClose,
+                      logo: crypto['logo'],
+                    ),
+                  ),
+                );
+              },
+              child: ListTile(
+                leading: Icon(
+                  _getCryptoIcon(displaySymbol),
+                  color: Colors.amber,
+                  size: 32,
                 ),
+                title: Text(
+                  displaySymbol,
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                  '$currencySymbol${price.toStringAsFixed(2)}',
+                  style: const TextStyle(color: Colors.white),
+                ),
+                trailing: _buildPriceChangeText(price, prevClose, currencySymbol),
               ),
             );
           },
-          child: ListTile(
-            leading: Icon(
-              _getCryptoIcon(displaySymbol),
-              color: Colors.amber,
-              size: 32,
-            ),
-            title: Text(
-              displaySymbol,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(
-              '\$${price.toStringAsFixed(2)}',
-              style: const TextStyle(color: Colors.white),
-            ),
-            trailing: _buildPriceChangeText(price, prevClose),
-          ),
         );
       },
     );

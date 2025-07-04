@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../screens/stock_details_screen.dart';
+import 'package:provider/provider.dart';
+import '../providers/country_provider.dart';
 
 class StockListItem extends StatelessWidget {
   final Map<String, dynamic> stock;
@@ -8,16 +10,19 @@ class StockListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currencySymbol = Provider.of<CountryProvider>(context).currencySymbol;
     final price = (stock['price'] is num) ? (stock['price'] as num).toDouble() : 0.0;
     final prevClose = (stock['prevClose'] is num) ? (stock['prevClose'] as num).toDouble() : 0.0;
     final diff = price - prevClose;
     final color = diff > 0 ? Colors.green : (diff < 0 ? Colors.red : Colors.white);
     final quantity = (stock['quantity'] as num?)?.toDouble() ?? 1.0;
     final total = price * quantity;
-
     final logo = stock['logo'];
     final symbol = stock['symbol'] ?? '?';
     final name = stock['name'] ?? 'Unknown';
+    final exchangeRate = Provider.of<CountryProvider>(context).exchangeRate;
+    final convertedPrice = price * exchangeRate;
+    final convertedTotal = total * exchangeRate;
 
     return GestureDetector(
       onTap: () {
@@ -49,7 +54,7 @@ class StockListItem extends StatelessWidget {
           style: const TextStyle(color: Colors.white),
         ),
         subtitle: Text(
-          '${quantity.toStringAsFixed(0)} × \$${price.toStringAsFixed(2)} = \$${total.toStringAsFixed(2)}',
+          '${quantity.toStringAsFixed(0)} × $currencySymbol${convertedPrice.toStringAsFixed(2)} = $currencySymbol${convertedTotal.toStringAsFixed(2)}',
           style: const TextStyle(color: Colors.white),
         ),
         trailing: Icon(Icons.show_chart, color: color),

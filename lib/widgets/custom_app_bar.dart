@@ -2,22 +2,13 @@
 /// It includes the app logo, a country/currency selector, search icon, and menu icon.
 
 import 'package:flutter/material.dart';
-import '../models/country_option.dart'; // Adjust path as needed
+import 'package:provider/provider.dart';
+import '../models/country_option.dart';
+import '../providers/country_provider.dart';
 
 /// Reusable AppBar with StoX logo, search, currency, and menu icons
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  // Currently selected country and currency
-  final CountryOption selectedCountry;
-
-  // Callback when the country/currency is changed
-  final ValueChanged<CountryOption> onCountryChanged;
-
-  /// Creates a CustomAppBar with the selected country and a callback for changes
-  const CustomAppBar({
-    super.key,
-    required this.selectedCountry,
-    required this.onCountryChanged,
-  });
+  const CustomAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +26,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           constraints: BoxConstraints(maxWidth: 220),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<CountryOption>(
-              value: selectedCountry,
+              value: Provider.of<CountryProvider>(context).selectedCountry,
               icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
               dropdownColor: Colors.black87,
               underline: const SizedBox(),
               onChanged: (value) {
-                if (value != null) onCountryChanged(value);
+                if (value != null) {
+                  Provider.of<CountryProvider>(context, listen: false).updateCountry(value);
+                }
               },
               selectedItemBuilder: (BuildContext context) {
                 return countryOptions.map<Widget>((CountryOption country) {
