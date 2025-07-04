@@ -10,7 +10,14 @@ import 'package:flutter/material.dart';
 
 /// Service for fetching stock data from Finnhub API.
 class StockService {
+  // In-memory cache to store stock data per symbol
+  static final Map<String, Map<String, dynamic>> _stockCache = {};
 
+  // Tracks when each symbol was last fetched
+  static final Map<String, DateTime> _cacheTimestamps = {};
+
+  // Duration before cached data is considered stale
+  static const Duration _cacheDuration = Duration(minutes: 2);
   /// Fetches real-time quote and profile info for a given stock symbol.
   /// Caches results to reduce API calls and improve performance.
   static Future<Map<String, dynamic>?> fetchStockInfo(String symbol, BuildContext context) async {
@@ -19,7 +26,15 @@ class StockService {
     final apiKey = dotenv.env['API_KEY'];
     final quoteUrl = Uri.parse('$baseUrl/quote?symbol=$symbol&token=$apiKey');
     final profileUrl = Uri.parse('$baseUrl/stock/profile2?symbol=$symbol&token=$apiKey');
+    final now = DateTime.now();
+    final lastFetch = _cacheTimestamps[symbol];
 
+    // Return cached data if it exists and is still fresh
+    if (_stockCache.containsKey(symbol) &&
+        lastFetch != null &&
+        now.difference(lastFetch) < _cacheDuration) {
+      return _stockCache[symbol];
+    }
     try {
       final quoteResponse = await http.get(quoteUrl);
       final profileResponse = await http.get(profileUrl);
@@ -36,9 +51,9 @@ class StockService {
           'name': profileData['name'] ?? symbol,
         };
 
-        /*// Save to cache
+        // Save to cache
         _stockCache[symbol] = stockData;
-        _cacheTimestamps[symbol] = now;*/
+        _cacheTimestamps[symbol] = now;
 
         return stockData;
       } else {
