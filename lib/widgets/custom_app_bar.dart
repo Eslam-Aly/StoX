@@ -144,7 +144,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
   Widget _buildCountryDropdown(CountryProvider countryProvider) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 220),
+      constraints: const BoxConstraints(maxWidth: 240),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<CountryOption>(
           value: countryProvider.selectedCountry,
@@ -166,6 +166,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
               const SizedBox(width: 8),
               Text('${country.name} (${country.currencyCode})', style: const TextStyle(color: Colors.white)),
+
             ],
           )).toList(),
           items: countryOptions.map((country) => DropdownMenuItem(
